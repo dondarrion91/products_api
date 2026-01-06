@@ -26,8 +26,8 @@ Incluye CRUD genérico, relaciones entre entidades, autenticación vía **X-API-
 1. Clonar el repositorio:
 
 ```bash
-git clone https://git-rba.hackerrank.com/git/121b234e-dda2-4dca-b87d-4ac395e1e686-v2
-cd 121b234e-dda2-4dca-b87d-4ac395e1e686-v2
+git@github.com:dondarrion91/products_api.git
+cd products_api
 ```
 
 ### Instalar dependencias:
