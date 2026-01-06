@@ -26,7 +26,7 @@ Incluye CRUD genérico, relaciones entre entidades, autenticación vía **X-API-
 1. Clonar el repositorio:
 
 ```bash
-git@github.com:dondarrion91/products_api.git
+git clone git@github.com:dondarrion91/products_api.git
 cd products_api
 ```
 
