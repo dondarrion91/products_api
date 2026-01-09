@@ -16,11 +16,12 @@ import (
 
 var (
 	validate = validator.New()
-	lock     = sync.Mutex{}
 )
 
 type CrudHandler[T any] struct {
 	service *service.CrudService[T]
+	lock    sync.RWMutex
+	clock   sync.Mutex
 }
 
 func NewCrudHandler[T any](s *service.CrudService[T]) *CrudHandler[T] {
@@ -47,8 +48,8 @@ func BindJSON(c echo.Context, entity interface{}) error {
 
 func (h *CrudHandler[T]) CreateEntity(c echo.Context) error {
 	// Evito problemas de concurrencia
-	lock.Lock()
-	defer lock.Unlock()
+	h.clock.Lock()
+	defer h.clock.Unlock()
 
 	var entity T
 
@@ -74,8 +75,8 @@ func (h *CrudHandler[T]) CreateEntity(c echo.Context) error {
 }
 
 func (h *CrudHandler[T]) GetAllEntities(c echo.Context) error {
-	lock.Lock()
-	defer lock.Unlock()
+	h.lock.RLock()
+	defer h.lock.RUnlock()
 
 	q := c.QueryParam("q")
 	limit, _ := strconv.Atoi(c.QueryParam("limit"))
@@ -93,8 +94,8 @@ func (h *CrudHandler[T]) GetAllEntities(c echo.Context) error {
 }
 
 func (h *CrudHandler[T]) GetEntityByID(c echo.Context) error {
-	lock.Lock()
-	defer lock.Unlock()
+	h.lock.RLock()
+	defer h.lock.RUnlock()
 
 	id := c.Param("id")
 
@@ -111,8 +112,8 @@ func (h *CrudHandler[T]) GetEntityByID(c echo.Context) error {
 
 func (h *CrudHandler[T]) UpdateEntity(c echo.Context) error {
 	// Evito problemas de concurrencia
-	lock.Lock()
-	defer lock.Unlock()
+	h.clock.Lock()
+	defer h.clock.Unlock()
 
 	var entity T
 
@@ -136,8 +137,8 @@ func (h *CrudHandler[T]) UpdateEntity(c echo.Context) error {
 }
 
 func (h *CrudHandler[T]) DeleteEntity(c echo.Context) error {
-	lock.Lock()
-	defer lock.Unlock()
+	h.clock.Lock()
+	defer h.clock.Unlock()
 
 	id := c.Param("id")
 

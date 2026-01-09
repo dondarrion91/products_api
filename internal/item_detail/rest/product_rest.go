@@ -5,12 +5,15 @@ import (
 	"project/internal/item_detail/service"
 	"project/internal/item_detail/utils"
 	models "project/pkg"
+	"sync"
 
 	"github.com/labstack/echo/v4"
 )
 
 type ProductHandler struct {
 	service *service.ProductService
+	lock    sync.RWMutex
+	clock   sync.Mutex
 }
 
 func NewProductHandler(s *service.ProductService) *ProductHandler {
@@ -21,8 +24,8 @@ func NewProductHandler(s *service.ProductService) *ProductHandler {
 
 func (h *ProductHandler) GetProduct(c echo.Context) (*models.Product, error) {
 	// Evito problemas de concurrencia
-	lock.Lock()
-	defer lock.Unlock()
+	h.lock.RLock()
+	defer h.lock.RUnlock()
 
 	id := c.Param("id")
 
@@ -37,8 +40,8 @@ func (h *ProductHandler) GetProduct(c echo.Context) (*models.Product, error) {
 
 func (h *ProductHandler) ChangeCategories(c echo.Context) error {
 	// Evito problemas de concurrencia
-	lock.Lock()
-	defer lock.Unlock()
+	h.clock.Lock()
+	defer h.clock.Unlock()
 
 	var entity utils.ChangeAttributePayload
 
@@ -57,8 +60,8 @@ func (h *ProductHandler) ChangeCategories(c echo.Context) error {
 
 func (h *ProductHandler) AddImages(c echo.Context) error {
 	// Evito problemas de concurrencia
-	lock.Lock()
-	defer lock.Unlock()
+	h.clock.Lock()
+	defer h.clock.Unlock()
 
 	var entity utils.ChangeAttributePayload
 
@@ -79,8 +82,8 @@ func (h *ProductHandler) AddImages(c echo.Context) error {
 
 func (h *ProductHandler) ChangeSellers(c echo.Context) error {
 	// Evito problemas de concurrencia
-	lock.Lock()
-	defer lock.Unlock()
+	h.clock.Lock()
+	defer h.clock.Unlock()
 
 	var entity utils.ChangeAttributePayload
 
